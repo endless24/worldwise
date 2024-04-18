@@ -38,9 +38,9 @@
     },
 
     {
-      "cityName": "Nigeria",
-      "country": "Portugal",
-      "emoji": "🇵🇹",
+      "cityName": "Lagos",
+      "country": "Nigeria",
+      "emoji": "🇳🇬",
       "date": "2027-10-31T15:59:59.138Z",
       "notes": "My favorite city so far!",
       "position": {
@@ -50,8 +50,8 @@
       "id": 73950385
     },
     {
-      "cityName": "Ghana",
-      "country": "Spain",
+      "cityName": "Accra",
+      "country": "Ghana",
       "emoji": "🇪🇸",
       "date": "2027-07-15T08:22:53.976Z",
       "notes": "",
