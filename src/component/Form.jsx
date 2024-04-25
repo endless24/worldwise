@@ -39,7 +39,7 @@ function Form() {
 
   const [geocodingError, setGeocodingError] = useState("");
 
-  const [startDate, setStartDate] = useState(new Date());
+  const [date, setDate] = useState(new Date());
 
   const { createCity } = useCities();
 
@@ -76,7 +76,7 @@ function Form() {
   // function that handles new city object
   function handleSubmit(e) {
     e.preventDefault();
-    if (!cityName || !startDate) return;
+    if (!cityName || !date) return;
 
     const newCity = {
       cityName,
@@ -87,7 +87,7 @@ function Form() {
       position: { lat, lng },
     };
     createCity(newCity);
-    // console.log(newCity)
+    console.log(newCity);
   }
 
   if (isLoadingGeocoding) return <Spinner />;
@@ -112,8 +112,8 @@ function Form() {
         <label htmlFor="date">When did you go to {cityName}?</label>
         <DatePicker
           id="date"
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
+          selected={date}
+          onChange={(date) => setDate(date)}
         />
       </div>
 

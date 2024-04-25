@@ -31,7 +31,7 @@ function Map() {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
     getPosition,
-  } = useGeolocation;
+  } = useGeolocation();
 
   const [lat, lng] = useURLPosition();
 
