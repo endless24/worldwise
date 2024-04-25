@@ -27,7 +27,7 @@ function CitiesProvider({ children }) {
     fetchCities();
   }, []);
 
-  //city function
+  //getting the a particular with the id
   async function getCity(id) {
     try {
       setIsLoading(true);
@@ -41,11 +41,34 @@ function CitiesProvider({ children }) {
     }
   }
 
+  //creatin a new city city function
+  async function createCity(newCity) {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${BASE_URL}/cities`, {
+        method: "POST",
+        body: JSON.stringify(newCity),
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+      console.log(res);
+      // const data = await res.json();
+      // setCurrentCity(data);
+    } catch (err) {
+      console.log(err);
+      // alert("There was an error loading data...");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const value = {
     cities,
     isLoading,
     currentCity,
     getCity,
+    createCity,
   };
 
   return (
