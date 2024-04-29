@@ -12,7 +12,6 @@
       },
       "id": "73930385"
     },
-
     {
       "cityName": "Berlin",
       "country": "Germany",
@@ -26,15 +25,15 @@
       "id": "98443197"
     },
     {
-      "id": "abaf",
-      "cityName": "Cimin",
+      "id": "eb5e",
+      "cityName": "Bayburt",
       "country": "Turkiye",
       "emoji": "🇹🇷",
-      "date": "2024-04-25T12:47:00.362Z",
-      "notes": "gooo",
+      "date": "2024-04-28T09:33:24.058Z",
+      "notes": "ss",
       "position": {
-        "lat": "39.690280594818034",
-        "lng": "39.690280594818034"
+        "lat": "40.413496049701955",
+        "lng": "40.413496049701955"
       }
     }
   ]
