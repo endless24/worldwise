@@ -41,7 +41,7 @@ function Form() {
 
   const [date, setDate] = useState(new Date());
 
-  const { createCity } = useCities();
+  const { createCity, isLoading } = useCities();
 
   useEffect(
     function () {
@@ -74,7 +74,7 @@ function Form() {
   );
 
   // function that handles new city object
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!cityName || !date) return;
 
@@ -86,8 +86,8 @@ function Form() {
       notes,
       position: { lat, lng },
     };
-    createCity(newCity);
-    console.log(newCity);
+    await createCity(newCity);
+    navigate("/app/cities");
   }
 
   if (isLoadingGeocoding) return <Spinner />;
@@ -97,7 +97,10 @@ function Form() {
   if (geocodingError) return <Message message={geocodingError} />;
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form
+      className={`${styles.form} ${isLoading ? styles.loading : ""}`}
+      onSubmit={handleSubmit}
+    >
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
