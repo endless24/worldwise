@@ -7,13 +7,16 @@ import HomePage from "./pages/HomePage";
 import AppLayout from "./pages/AppLayout";
 import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import CityList from "./component/CityList";
 import CountryList from "./component/CountryList";
 import City from "./component/City";
 import Form from "./component/Form";
 import { CitiesProvider } from "./contexts/CitiesContext";
-import { AuthProvider } from "./contexts/FakeAuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
+
 import ProtectedRoute from "./pages/ProtectedRoute";
+import PreventRoute from "./pages/PreventRoute";
 
 function App() {
   return (
@@ -21,10 +24,46 @@ function App() {
       <CitiesProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/product" element={<Product />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <PreventRoute>
+                  <HomePage />
+                </PreventRoute>
+              }
+            />
+            <Route
+              path="/product"
+              element={
+                <PreventRoute>
+                  <Product />
+                </PreventRoute>
+              }
+            />
+            <Route
+              path="/pricing"
+              element={
+                <PreventRoute>
+                  <Pricing />
+                </PreventRoute>
+              }
+            />
+            <Route
+              path="login"
+              element={
+                <PreventRoute>
+                  <Login />
+                </PreventRoute>
+              }
+            />
+            <Route
+              path="register"
+              element={
+                <PreventRoute>
+                  <Register />
+                </PreventRoute>
+              }
+            />
             <Route
               path="/app"
               element={

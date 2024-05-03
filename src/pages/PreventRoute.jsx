@@ -1,17 +1,16 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useEffect } from "react";
 
-function ProtectedRoute({ children }) {
+function PreventRoute({ children }) {
   const { userLoggedIn } = useAuth();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userLoggedIn) navigate("/");
-  }, [userLoggedIn, navigate]);
-
+    if (userLoggedIn) navigate("/app/cities");
+  }, [navigate, userLoggedIn]);
   return userLoggedIn ? children : null;
 }
 
-export default ProtectedRoute;
+export default PreventRoute;
