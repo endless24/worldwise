@@ -10,7 +10,7 @@ function PreventRoute({ children }) {
   useEffect(() => {
     if (userLoggedIn) navigate("/app/cities");
   }, [navigate, userLoggedIn]);
-  return userLoggedIn ? children : null;
+  return children;
 }
 
 export default PreventRoute;

@@ -20,7 +20,7 @@ function CountryList() {
   const countries = cities.reduce((arr, city) => {
     if (!arr.map((el) => el.country).includes(city.country))
       // If the country is not already present, add it to the accumulator array
-      return [...arr, { country: city.country, emoji: city.emoji }];
+      return [...arr, { country: city.country, emoji: city.countryCode }];
     //return the accumulator array
     else return arr;
   }, []);

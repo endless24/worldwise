@@ -12,6 +12,8 @@ function AuthProvider({ children }) {
 
   const [loading, setLoading] = useState(true);
 
+  const [userId, setUserId] = useState("");
+
   useEffect(() => {
     const unsubcribe = onAuthStateChanged(auth, initializeUser);
     return unsubcribe;
@@ -21,7 +23,7 @@ function AuthProvider({ children }) {
   async function initializeUser(user) {
     if (user) {
       setCurrentUser({ ...user });
-
+      setUserId(user.uid);
       setUserLoggedIn(true);
     } else {
       setCurrentUser(null);
@@ -35,6 +37,8 @@ function AuthProvider({ children }) {
     currentUser,
     userLoggedIn,
     loading,
+    userId,
+    setUserId,
   };
 
   return (

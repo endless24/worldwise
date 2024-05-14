@@ -1,13 +1,25 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  doc,
+  deleteDoc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import { useAuth } from "./AuthContext";
 
-const BASE_URL = "http://localhost:9000";
+// const BASE_URL = "http://localhost:9000";
 
 const CitiesContext = createContext();
 
 const initialState = {
   cities: [],
   isLoading: false,
-  currentCity: {},
+  currentCity: null,
   error: "",
 };
 
@@ -60,6 +72,15 @@ function reducer(state, action) {
   }
 }
 
+export function convertToEmoji(countryCode) {
+  const codePoints = countryCode
+
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt());
+  return String.fromCodePoint(...codePoints);
+}
+
 function CitiesProvider({ children }) {
   //distructured the state immediately
   const [{ cities, isLoading, currentCity, error }, dispatch] = useReducer(
@@ -67,36 +88,49 @@ function CitiesProvider({ children }) {
     initialState
   );
 
-  // const [cities, setCities] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [currentCity, setCurrentCity] = useState({});
+  const { userId } = useAuth();
+
   //fetching cities function
-  useEffect(function () {
-    async function fetchCities() {
-      dispatch({ type: "loading" });
-      try {
-        const res = await fetch(`${BASE_URL}/cities`);
-        const data = await res.json();
-        dispatch({ type: "cities/loaded", payload: data });
-      } catch {
-        dispatch({
-          type: "rejected",
-          payload: "There was an error loading cities...",
-        });
+  useEffect(
+    function () {
+      async function fetchCities() {
+        dispatch({ type: "loading" });
+        try {
+          const cityQuery = query(
+            collection(db, "cities"),
+            where("userId", "==", userId)
+          );
+          const querySnapshot = await getDocs(cityQuery);
+
+          const data = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          dispatch({ type: "cities/loaded", payload: data });
+        } catch {
+          dispatch({
+            type: "rejected",
+            payload: "There was an error loading cities...",
+          });
+        }
       }
-    }
-    fetchCities();
-  }, []);
+      fetchCities();
+    },
+    [userId]
+  );
 
   //getting the a particular with the id
   async function getCity(id) {
     //preventing api not to fetch multiple time
-    if (Number(id) === currentCity.id) return;
+    if (id === currentCity?.id) return;
 
     dispatch({ type: "loading" });
     try {
-      const res = await fetch(`${BASE_URL}/cities/${id}`);
-      const data = await res.json();
+      const docRef = doc(db, "cities", id);
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+
       dispatch({ type: "city/loaded", payload: data });
     } catch {
       dispatch({
@@ -110,9 +144,10 @@ function CitiesProvider({ children }) {
   async function deleteCity(id) {
     dispatch({ type: "loading" });
     try {
-      await fetch(`${BASE_URL}/cities/${id}`, {
-        method: "DELETE",
-      });
+      // await fetch(`${BASE_URL}/cities/${id}`, {
+      //   method: "DELETE",
+      // });
+      await deleteDoc(doc(db, "cities", id));
 
       dispatch({ type: "city/deleted", payload: id });
       // setCities((cities) => cities.filter((city) => city.id !== id));
@@ -128,15 +163,9 @@ function CitiesProvider({ children }) {
   async function createCity(newCity) {
     dispatch({ type: "loading" });
     try {
-      const res = await fetch(`${BASE_URL}/cities`, {
-        method: "POST",
-        body: JSON.stringify(newCity),
-        headers: {
-          "content-type": "application/json",
-        },
+      const data = await addDoc(collection(db, "cities"), {
+        ...newCity,
       });
-      const data = await res.json();
-      // setCities((cities) => [...cities, data]);
       dispatch({ type: "city/created", payload: data });
     } catch {
       dispatch({
@@ -154,6 +183,7 @@ function CitiesProvider({ children }) {
     createCity,
     deleteCity,
     error,
+    convertToEmoji,
   };
 
   return (

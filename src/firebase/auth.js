@@ -19,6 +19,10 @@ export const dosignInWithEmailAndPassword = async (email, password) => {
   return signInWithEmailAndPassword(auth, email, password);
 };
 
+export const doSignOut = () => {
+  return auth.signOut();
+};
+
 //function to sign in with google
 // export const doSignInWithGoogle = async () => {
 //   const provider = GoogleAuthProvider();
@@ -26,10 +30,6 @@ export const dosignInWithEmailAndPassword = async (email, password) => {
 //   // to get details of user you can use-> result.user.email
 //   return result;
 // };
-
-export const doSignOut = () => {
-  return auth.signOut();
-};
 
 // export const doPasswordReset = (email) => {
 //   return sendPasswordResetEmail(auth, email);

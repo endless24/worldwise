@@ -10,7 +10,7 @@ const formatDate = (date) =>
     day: "numeric",
     month: "long",
     year: "numeric",
-    weekday: "long",
+    // weekday: "long",
   }).format(new Date(date));
 
 function City() {
@@ -25,11 +25,17 @@ function City() {
     },
     [id]
   );
-
-  const { cityName, emoji, date, notes } = currentCity;
-
-  //loading
+  // loading;
   if (isLoading) return <Spinner />;
+
+  const { cityName, emoji, date, notes } = currentCity ? currentCity : {};
+  let dateStamp;
+  if (currentCity !== null) {
+    // converting timestamp to js date
+    let timestampInSeconds = date?.seconds;
+    dateStamp = new Date(timestampInSeconds * 1000);
+    // console.log(dateStamp);
+  }
 
   return (
     <div className={styles.city}>
@@ -42,7 +48,7 @@ function City() {
 
       <div className={styles.row}>
         <h6>You went to {cityName} on</h6>
-        <p>{formatDate(date || null)}</p>
+        <p>{formatDate(dateStamp || null)}</p>
       </div>
 
       {notes && (
