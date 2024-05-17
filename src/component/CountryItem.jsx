@@ -1,10 +1,9 @@
 import propTypes from "prop-types";
 
 import styles from "./CountryItem.module.css";
-import { useCities } from "../contexts/CitiesContext";
+import { convertToEmoji } from "../utils";
 
 function CountryItem({ country }) {
-  const { convertToEmoji } = useCities();
   return (
     <li className={styles.countryItem}>
       <span>{convertToEmoji(country.emoji)}</span>

@@ -14,6 +14,8 @@ function AuthProvider({ children }) {
 
   const [userId, setUserId] = useState("");
 
+  const [userEmail, setUserEmail] = useState("");
+
   useEffect(() => {
     const unsubcribe = onAuthStateChanged(auth, initializeUser);
     return unsubcribe;
@@ -24,6 +26,7 @@ function AuthProvider({ children }) {
     if (user) {
       setCurrentUser({ ...user });
       setUserId(user.uid);
+      setUserEmail(user.email);
       setUserLoggedIn(true);
     } else {
       setCurrentUser(null);
@@ -39,6 +42,7 @@ function AuthProvider({ children }) {
     loading,
     userId,
     setUserId,
+    userEmail,
   };
 
   return (

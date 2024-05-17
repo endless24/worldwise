@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../contexts/AuthContext";
 import { doSignOut } from "../firebase/auth";
 import styles from "./User.module.css";
+import { useAuth } from "../contexts/AuthContext";
 
 const FAKE_USER = {
   //   name: "Jack",
@@ -12,7 +13,7 @@ const FAKE_USER = {
 
 function User() {
   // const { currentUser } = useAuth;
-
+  const { userEmail } = useAuth();
   const user = FAKE_USER;
   // console.log(user);
 
@@ -27,7 +28,7 @@ function User() {
   return (
     <div className={styles.user}>
       <img src={user.avatar} alt={user.displayName} />
-      {/* <span>Welcome, {user.displayName}</span> */}
+      <span>Welcome, {userEmail}</span>
       <button onClick={handleClick}>Logout</button>
     </div>
   );

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import styles from "./CityItem.module.css";
 import { useCities } from "../contexts/CitiesContext";
+import { convertToEmoji } from "../utils";
 
 // formatting the date
 const formatDate = (date) =>
@@ -16,11 +17,12 @@ const formatDate = (date) =>
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
 
-  const { emoji, cityName, date, id, position } = city;
+  const { countryCode, cityName, date, id, position } = city;
 
-  // converting timestamp to js date
   const timestampInSeconds = date?.seconds;
   const dateStamp = new Date(timestampInSeconds * 1000);
+
+  // converting timestamp to js date
 
   //the handleDelete function that triggers the delete
   function handleDelete(e) {
@@ -32,11 +34,13 @@ function CityItem({ city }) {
     <li>
       <Link
         className={`${styles.cityItem} ${
-          id === currentCity?.id ? styles["cityItem--active"] : ""
+          currentCity !== null && cityName === currentCity.cityName
+            ? styles["cityItem--active"]
+            : ""
         }`}
         to={`${id}?lat=${position?.lat}&lng=${position?.lng}`}
       >
-        <span className={styles.emoji}>{emoji}</span>
+        <span className={styles.emoji}>{convertToEmoji(countryCode)}</span>
 
         <h3 className={styles.name}>{cityName}</h3>
 

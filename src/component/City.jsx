@@ -4,6 +4,7 @@ import { useCities } from "../contexts/CitiesContext";
 import { useEffect } from "react";
 import Spinner from "./Spinner";
 import BackButton from "./BackButton";
+import { convertToEmoji } from "../utils";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en", {
@@ -16,7 +17,7 @@ const formatDate = (date) =>
 function City() {
   //using useParams to get id of the city
   const { id } = useParams();
-  // console.log(id);
+
   const { currentCity, getCity, isLoading } = useCities();
 
   useEffect(
@@ -28,13 +29,16 @@ function City() {
   // loading;
   if (isLoading) return <Spinner />;
 
-  const { cityName, emoji, date, notes } = currentCity ? currentCity : {};
+  const { cityName, countryCode, date, notes } = currentCity ? currentCity : {};
+
   let dateStamp;
+  let emoji;
   if (currentCity !== null) {
     // converting timestamp to js date
+
     let timestampInSeconds = date?.seconds;
     dateStamp = new Date(timestampInSeconds * 1000);
-    // console.log(dateStamp);
+    emoji = convertToEmoji(countryCode);
   }
 
   return (

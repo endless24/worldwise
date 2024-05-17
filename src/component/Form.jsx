@@ -13,8 +13,9 @@ import Message from "./Message";
 import Spinner from "./Spinner";
 import { useCities } from "../contexts/CitiesContext";
 import { useAuth } from "../contexts/AuthContext";
+import { convertToEmoji } from "../utils";
 
-// export function convertToEmoji(countryCode) {
+// export function (countryCode) {
 //   const codePoints = countryCode
 
 //     .toUpperCase()
@@ -43,7 +44,7 @@ function Form() {
 
   const [date, setDate] = useState(new Date());
 
-  const { createCity, isLoading, convertToEmoji } = useCities();
+  const { createCity, isLoading } = useCities();
 
   const { userId } = useAuth();
 
