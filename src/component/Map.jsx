@@ -11,15 +11,12 @@ import {
 
 import styles from "./Map.module.css";
 import btnStyles from "./Button.module.css";
-import { useEffect, useState } from "react";
 import { useCities } from "../contexts/CitiesContext";
 import { useGeolocation } from "../hooks/useGeolocation";
-import { useURLPosition } from "../hooks/useURLPosition";
+// import { useURLPosition } from "../hooks/useURLPosition";
 
 function Map() {
   const { cities } = useCities();
-
-  const [mapPosition, setMapPosition] = useState([40, 0]);
 
   const [searchParams] = useSearchParams();
 
@@ -27,30 +24,24 @@ function Map() {
 
   const mapLng = searchParams.get("lng");
 
+  let mapPosition = [40, 0];
+
   const {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
     getPosition,
   } = useGeolocation();
 
-  const [lat, lng] = useURLPosition();
+  // const [lat, lng] = useURLPosition();
 
   //syncing the corrent position of the map
-  useEffect(
-    function () {
-      if (mapLat && mapLng) setMapPosition([mapLat, mapLng]);
-    },
-    [mapLat, mapLng]
-  );
+  // console.log(mapLat, mapLng);
 
-  //syncing the mapPosition with the Geolocation
-  useEffect(
-    function () {
-      if (geolocationPosition)
-        setMapPosition([geolocationPosition.lat, geolocationPosition.lng]);
-    },
-    [geolocationPosition]
-  );
+  if (mapLat && mapLng) {
+    mapPosition = [mapLat, mapLng];
+  } else if (geolocationPosition) {
+    mapPosition = [geolocationPosition.lat, geolocationPosition.lng];
+  }
 
   return (
     <div className={styles.mapContainer}>

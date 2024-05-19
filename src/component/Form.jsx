@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { storage } from "../firebase/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 } from "uuid";
 
 import styles from "./Form.module.css";
 import btnStyles from "./Button.module.css";
@@ -15,14 +18,6 @@ import { useCities } from "../contexts/CitiesContext";
 import { useAuth } from "../contexts/AuthContext";
 import { convertToEmoji } from "../utils";
 
-// export function (countryCode) {
-//   const codePoints = countryCode
-
-//     .toUpperCase()
-//     .split("")
-//     .map((char) => 127397 + char.charCodeAt());
-//   return String.fromCodePoint(...codePoints);
-// }
 const BASE_URL = "https://api.bigdatacloud.net/data/reverse-geocode-client";
 
 function Form() {
@@ -35,6 +30,8 @@ function Form() {
   const [country, setCountry] = useState("");
 
   const [notes, setNotes] = useState("");
+
+  const [UploadImage, setUploadImage] = useState(null);
 
   const [isLoadingGeocoding, setIsLoadingGeocoding] = useState(false);
 
@@ -79,17 +76,27 @@ function Form() {
     [lat, lng]
   );
 
+  // let imgRefPath;
+  async function imageUpload() {
+    if (UploadImage === null) return;
+    const imageRef = ref(storage, `citiesImg/${UploadImage.name + v4()}`);
+    await uploadBytes(imageRef, UploadImage).then((res) => {
+      console.log(res);
+    });
+  }
+  // console.log(imgRefPath);
   // function that handles new city object
   async function handleSubmit(e) {
     e.preventDefault();
     if (!cityName || !date) return;
-
+    imageUpload();
     const newCity = {
       userId,
       cityName,
       country,
       countryCode,
       date,
+      // imgRefPath,
       notes,
       position: { lat, lng },
     };
@@ -124,6 +131,14 @@ function Form() {
           id="date"
           selected={date}
           onChange={(date) => setDate(date)}
+        />
+      </div>
+
+      <div className={styles.row}>
+        <label htmlFor="image">Upload image you got from {cityName}?</label>
+        <input
+          type="file"
+          onChange={(e) => setUploadImage(e.target.files[0])}
         />
       </div>
 
