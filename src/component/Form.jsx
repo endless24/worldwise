@@ -78,28 +78,36 @@ function Form() {
 
   // let imgRefPath;
   async function imageUpload() {
-    if (UploadImage === null) return;
-    const imageRef = ref(storage, `citiesImg/${UploadImage.name + v4()}`);
-    await uploadBytes(imageRef, UploadImage).then((res) => {
-      console.log(res);
-    });
+    // const imageRef = ref(storage, `citiesImg/${UploadImage.name + v4()}`);
+    // await uploadBytes(imageRef, UploadImage).then((res) => {
+    //   console.log(res);
+    // });
   }
   // console.log(imgRefPath);
   // function that handles new city object
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!cityName || !date) return;
-    imageUpload();
+
+    if (UploadImage === null) return;
     const newCity = {
       userId,
       cityName,
       country,
       countryCode,
       date,
-      // imgRefPath,
       notes,
       position: { lat, lng },
     };
+    const imgs = UploadImage;
+    const file = imgs;
+    const imageRef = ref(storage, `citiesImg/${v4()}`);
+    await uploadBytes(imageRef, file).then((snapshot) => {
+      getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
+        newCity.UploadImage = url;
+      });
+    });
+    if (!cityName || !date) return;
+
     await createCity(newCity);
     navigate("/app/cities");
   }
