@@ -9,8 +9,12 @@ import {
   deleteDoc,
   getDoc,
 } from "firebase/firestore";
+import { storage } from "../firebase/firebase";
 import { db } from "../firebase/firebase";
 import { useAuth } from "./AuthContext";
+import { deleteObject, ref } from "firebase/storage";
+import { toast } from "react-toastify";
+import { useCallback } from "react";
 
 // const BASE_URL = "http://localhost:9000";
 
@@ -81,68 +85,79 @@ function CitiesProvider({ children }) {
 
   const { userId } = useAuth();
 
-  //fetching cities function
   useEffect(
     function () {
+      //fetching cities function
+      async function fetchCities() {
+        dispatch({ type: "loading" });
+        try {
+          const cityQuery = query(
+            collection(db, "cities"),
+            where("userId", "==", userId)
+          );
+          const querySnapshot = await getDocs(cityQuery);
+
+          const data = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          dispatch({ type: "cities/loaded", payload: data });
+        } catch {
+          dispatch({
+            type: "rejected",
+            payload: "There was an error loading cities...",
+          });
+        }
+      }
       fetchCities();
     },
     [userId]
   );
 
-  async function fetchCities() {
-    dispatch({ type: "loading" });
-    try {
-      const cityQuery = query(
-        collection(db, "cities"),
-        where("userId", "==", userId)
-      );
-      const querySnapshot = await getDocs(cityQuery);
-
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      dispatch({ type: "cities/loaded", payload: data });
-    } catch {
-      dispatch({
-        type: "rejected",
-        payload: "There was an error loading cities...",
-      });
-    }
-  }
-
   //getting the a particular with the id
-  async function getCity(id) {
-    //preventing api not to fetch multiple time
-    if (id === currentCity?.id) return;
+  const getCity = useCallback(
+    async function getCity(id) {
+      //preventing api not to fetch multiple time
+      if (id === currentCity?.id) return;
 
-    dispatch({ type: "loading" });
-    try {
-      const docRef = doc(db, "cities", id);
-      const docSnap = await getDoc(docRef);
-      const data = docSnap.data();
+      dispatch({ type: "loading" });
+      try {
+        const docRef = doc(db, "cities", id);
+        const docSnap = await getDoc(docRef);
+        const data = docSnap.data();
 
-      dispatch({ type: "city/loaded", payload: data });
-    } catch {
-      dispatch({
-        type: "rejected",
-        payload: "There was an error loading the city...",
-      });
-    }
-  }
+        dispatch({ type: "city/loaded", payload: data });
+      } catch {
+        dispatch({
+          type: "rejected",
+          payload: "There was an error loading the city...",
+        });
+      }
+    },
+    [currentCity?.id]
+  );
 
   //async function that delete city
-  async function deleteCity(id) {
+  async function deleteCity(id, imgId) {
     dispatch({ type: "loading" });
     try {
-      // await fetch(`${BASE_URL}/cities/${id}`, {
-      //   method: "DELETE",
-      // });
+      const imgRef = ref(storage, imgId);
+      deleteObject(imgRef)
+        .then(() => {
+          toast.success("City delete succefully", {
+            position: "top-center",
+          });
+        })
+
+        .catch((error) => {
+          toast.error(error.message, {
+            position: "top-center",
+          });
+        });
       await deleteDoc(doc(db, "cities", id));
 
       dispatch({ type: "city/deleted", payload: id });
-      // setCities((cities) => cities.filter((city) => city.id !== id));
     } catch {
       dispatch({
         type: "rejected",
@@ -159,7 +174,7 @@ function CitiesProvider({ children }) {
         ...newCity,
       });
       if (data.id) {
-        fetchCities();
+        // fetchCities();
       } else {
         dispatch({
           type: "rejected",

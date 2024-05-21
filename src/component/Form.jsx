@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { storage } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
+import { toast } from "react-toastify";
 
 import styles from "./Form.module.css";
 import btnStyles from "./Button.module.css";
@@ -41,7 +42,7 @@ function Form() {
 
   const [date, setDate] = useState(new Date());
 
-  const { createCity, isLoading } = useCities();
+  const { createCity, isLoading, error } = useCities();
 
   const { userId } = useAuth();
 
@@ -76,40 +77,46 @@ function Form() {
     [lat, lng]
   );
 
-  // let imgRefPath;
-  async function imageUpload() {
-    // const imageRef = ref(storage, `citiesImg/${UploadImage.name + v4()}`);
-    // await uploadBytes(imageRef, UploadImage).then((res) => {
-    //   console.log(res);
-    // });
-  }
-  // console.log(imgRefPath);
   // function that handles new city object
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (UploadImage === null) return;
-    const newCity = {
-      userId,
-      cityName,
-      country,
-      countryCode,
-      date,
-      notes,
-      position: { lat, lng },
-    };
-    const imgs = UploadImage;
-    const file = imgs;
-    const imageRef = ref(storage, `citiesImg/${v4()}`);
-    await uploadBytes(imageRef, file).then((snapshot) => {
-      getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
-        newCity.UploadImage = url;
-      });
-    });
-    if (!cityName || !date) return;
+    let url, refId;
+    try {
+      if (UploadImage === null) return;
+      refId = `citiesImg/${v4()}`;
 
-    await createCity(newCity);
-    navigate("/app/cities");
+      const imageRef = ref(storage, refId);
+      await uploadBytes(imageRef, UploadImage);
+      url = await getDownloadURL(imageRef);
+
+      toast.success("City added succefully", {
+        position: "top-center",
+      });
+    } catch (error) {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    }
+    try {
+      if (!cityName || !date) return;
+      const newCity = {
+        userId,
+        cityName,
+        country,
+        countryCode,
+        date,
+        files: [{ refId, url }],
+        notes,
+        position: { lat, lng },
+      };
+      await createCity(newCity);
+      navigate("/app/cities");
+    } catch {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    }
   }
 
   if (isLoadingGeocoding) return <Spinner />;
@@ -156,6 +163,7 @@ function Form() {
           id="notes"
           onChange={(e) => setNotes(e.target.value)}
           value={notes}
+          required
         />
       </div>
 

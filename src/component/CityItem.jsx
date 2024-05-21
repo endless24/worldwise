@@ -17,7 +17,8 @@ const formatDate = (date) =>
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
 
-  const { countryCode, cityName, date, id, position } = city;
+  const { countryCode, cityName, date, id, files, position } = city;
+  const imgId = files[0].refId;
 
   const timestampInSeconds = date?.seconds;
   const dateStamp = new Date(timestampInSeconds * 1000);
@@ -27,7 +28,7 @@ function CityItem({ city }) {
   //the handleDelete function that triggers the delete
   function handleDelete(e) {
     e.preventDefault();
-    deleteCity(id);
+    deleteCity(id, imgId);
   }
 
   return (

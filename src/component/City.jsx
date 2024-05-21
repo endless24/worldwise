@@ -24,25 +24,30 @@ function City() {
     function () {
       getCity(id);
     },
-    [id]
+    [id, getCity]
   );
   // loading;
   if (isLoading) return <Spinner />;
 
-  const { cityName, countryCode, date, notes } = currentCity ? currentCity : {};
+  const { cityName, countryCode, date, notes, files } = currentCity
+    ? currentCity
+    : {};
 
-  let dateStamp;
-  let emoji;
+  let dateStamp, emoji, cityImg;
+
   if (currentCity !== null) {
     // converting timestamp to js date
 
-    let timestampInSeconds = date?.seconds;
+    let timestampInSeconds = date?.seconds ? date?.seconds : "";
     dateStamp = new Date(timestampInSeconds * 1000);
     emoji = convertToEmoji(countryCode);
+    cityImg = files ? files[0]?.url : "";
   }
 
   return (
     <div className={styles.city}>
+      <h6>{cityName} image</h6>
+      <img src={cityImg} style={{ height: "50%", width: "100%" }} />
       <div className={styles.row}>
         <h6>City name</h6>
         <h3>
